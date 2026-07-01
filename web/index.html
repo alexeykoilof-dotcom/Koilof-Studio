@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#161316">
+  <title>Koilof Studio</title>
+  <link rel="stylesheet" href="/web/styles.css">
+</head>
+<body>
+  <div class="editor-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">K</span>
+        <div><strong>Koilof Studio</strong><small id="saveState">Новый проект</small></div>
+      </div>
+      <nav class="top-menu" aria-label="Главное меню">
+        <button id="newProjectTop" class="menu-btn">Новый проект</button>
+        <div class="menu-popover">
+          <button class="menu-btn" data-menu-toggle="toolsMenu">Инструменты</button>
+          <div id="toolsMenu" class="menu-panel" aria-hidden="true">
+            <button data-tool-action="importVideo">Добавить видео</button>
+            <button data-tool-action="importAudio">Добавить аудио</button>
+            <button data-tool-action="addText">Добавить текст</button>
+            <hr>
+            <button data-tool-action="select">Курсор <kbd>V</kbd></button>
+            <button data-tool-action="blade">Ножницы <kbd>B</kbd></button>
+            <button data-tool-action="split">Разрезать <kbd>S</kbd></button>
+            <button data-tool-action="splitAll">Разрезать всё</button>
+            <button data-tool-action="duplicate">Дублировать <kbd>Ctrl+D</kbd></button>
+            <button data-tool-action="copy">Копировать <kbd>Ctrl+C</kbd></button>
+            <button data-tool-action="paste">Вставить <kbd>Ctrl+V</kbd></button>
+            <hr>
+            <button data-tool-action="bgBlur">Blur выбранного видео</button>
+            <button data-tool-action="bgChroma">Chroma key выбранного видео</button>
+            <button data-tool-action="bgLumaDark">Убрать тёмный фон</button>
+            <hr>
+            <button data-tool-action="export">Экспорт MP4</button>
+          </div>
+        </div>
+        <button id="settingsTop" class="menu-btn">Настройки</button>
+        <button id="helpTop" class="menu-btn">Помощь</button>
+      </nav>
+      <div class="project-actions">
+        <button id="undoBtn" class="icon-btn" title="Отменить" disabled>↶</button>
+        <button id="redoBtn" class="icon-btn" title="Повторить" disabled>↷</button>
+        <button id="saveProject" class="btn secondary">Сохранить</button>
+        <button id="openOutputTop" class="btn secondary">Готовые видео</button>
+        <button id="exportTop" class="btn primary">Экспорт</button>
+      </div>
+    </header>
+
+    <main class="editor-main">
+      <aside class="library-panel panel">
+        <nav class="library-tabs" aria-label="Инструменты">
+          <button class="library-tab active" data-tab="media">Медиа</button>
+          <button class="library-tab" data-tab="text">Титры</button>
+          <button class="library-tab" data-tab="ai">ИИ</button>
+        </nav>
+
+        <section class="library-view active" data-view="media">
+          <div class="panel-title"><strong>Медиа</strong><small>Трек, фото и видео для фона</small></div>
+
+          <label class="drop-zone audio-drop">
+            <input id="audioInput" type="file" accept="audio/*">
+            <span class="drop-icon">♫</span>
+            <span><strong id="audioName">Добавить трек</strong><small>MP3, WAV, M4A</small></span>
+          </label>
+
+          <div class="section-row">
+            <strong>Мои медиа</strong>
+            <span class="source-note">Видео, фото, фоны</span>
+          </div>
+          <div class="media-actions">
+            <label class="mini-upload primary-upload">
+              <input id="videoInput" type="file" accept="video/*" multiple>
+              Добавить видео
+            </label>
+            <label class="mini-upload">
+              <input id="backgroundInput" type="file" accept="image/*,video/*" multiple>
+              Фото / фон
+            </label>
+          </div>
+          <div id="mediaBin" class="media-grid empty-state">Перетащите сюда фото или видео</div>
+
+          <div class="section-row">
+            <strong>Библиотека</strong>
+            <span class="source-note">Openverse</span>
+          </div>
+          <div class="search-row">
+            <input id="backgroundSearch" type="search" placeholder="Например: night city">
+            <button id="searchBackgrounds" class="btn compact">Найти</button>
+          </div>
+          <div id="onlineBackgrounds" class="media-grid library-results">
+            <button class="builtin-bg" data-bg="ember"><span class="bg-thumb ember"></span><small>Ember</small></button>
+            <button class="builtin-bg" data-bg="midnight"><span class="bg-thumb midnight"></span><small>Midnight</small></button>
+            <button class="builtin-bg" data-bg="paper"><span class="bg-thumb paper"></span><small>Paper</small></button>
+            <button class="builtin-bg" data-bg="mono"><span class="bg-thumb mono"></span><small>Mono</small></button>
+            <button class="builtin-bg" data-bg="lava"><span class="bg-thumb lava"></span><small>Lava</small></button>
+            <button class="builtin-bg" data-bg="neon"><span class="bg-thumb neon"></span><small>Neon</small></button>
+            <button class="builtin-bg" data-bg="ocean"><span class="bg-thumb ocean"></span><small>Ocean</small></button>
+            <button class="builtin-bg" data-bg="violet"><span class="bg-thumb violet"></span><small>Violet</small></button>
+            <button class="builtin-bg" data-bg="sunset"><span class="bg-thumb sunset"></span><small>Sunset</small></button>
+            <button class="builtin-bg" data-bg="forest"><span class="bg-thumb forest"></span><small>Forest</small></button>
+            <button class="builtin-bg" data-bg="grain"><span class="bg-thumb grain"></span><small>Grain</small></button>
+            <button class="builtin-bg" data-bg="noir"><span class="bg-thumb noir"></span><small>Noir</small></button>
+          </div>
+        </section>
+
+        <section class="library-view" data-view="text">
+          <div class="panel-title"><strong>Текст и титры</strong><small>Одна строка — один текстовый клип</small></div>
+          <textarea id="lyricsText" class="lyrics-editor" placeholder="Вставьте титры, субтитры или любой текст"></textarea>
+          <div class="stack-actions">
+            <button id="createTextClips" class="btn primary">Создать клипы</button>
+            <button id="addTextClip" class="btn secondary">Добавить пустую фразу</button>
+            <button id="loadTextFile" class="btn secondary">Загрузить TXT / SRT / LRC</button>
+          </div>
+          <input id="hiddenTextFile" type="file" accept=".txt,.srt,.lrc" hidden>
+          <div class="tip">Титры необязательны: можно монтировать видео и аудио без текста.</div>
+        </section>
+
+        <section class="library-view" data-view="ai">
+          <div class="panel-title"><strong>ИИ для текста</strong><small>Титры, описания и субтитры через Ollama</small></div>
+          <div id="aiStatus" class="ai-status checking"><span></span>Проверяем подключение…</div>
+          <div class="quick-prompts">
+            <button data-ai-action="split">Разбить на короткие строки</button>
+            <button data-ai-action="shorten">Сделать короче</button>
+            <button data-ai-action="polish">Исправить русский текст</button>
+            <button data-ai-action="hook">Усилить первые строки</button>
+          </div>
+          <div id="aiMessages" class="ai-messages">
+            <div class="ai-message assistant">Напишите, как изменить текст. Я верну готовую версию без лишних объяснений.</div>
+          </div>
+          <div class="ai-compose">
+            <textarea id="aiPrompt" placeholder="Например: сделай строки короче и эмоциональнее"></textarea>
+            <button id="sendAi" class="btn primary">Отправить</button>
+          </div>
+          <details class="ai-setup">
+            <summary>Как включить бесплатный ИИ</summary>
+            <p>Установите Ollama и модель <code>qwen2.5:1.5b</code>. Проект подключится к ней автоматически, ключ не нужен.</p>
+          </details>
+        </section>
+      </aside>
+
+      <section class="canvas-column">
+        <div class="canvas-toolbar panel">
+          <div class="segmented format-switch">
+            <button class="format-btn active" data-w="1080" data-h="1920">9:16</button>
+            <button class="format-btn" data-w="1920" data-h="1080">16:9</button>
+            <button class="format-btn" data-w="1080" data-h="1080">1:1</button>
+          </div>
+          <span id="canvasInfo">1080 × 1920</span>
+          <button id="fitCanvas" class="btn compact secondary">Вписать</button>
+        </div>
+
+        <div class="stage-wrap panel">
+          <div id="previewFrame" class="preview-frame ratio-vertical">
+            <div id="previewFallback" class="preview-fallback ember"></div>
+            <img id="previewBgImage" class="preview-media" alt="">
+            <video id="previewBgVideo" class="preview-media" muted playsinline></video>
+            <div class="stage-shade"></div>
+            <div id="previewText" class="preview-text anim-fade" tabindex="0">Добавьте текст</div>
+            <div id="safeArea" class="safe-area"></div>
+          </div>
+        </div>
+
+        <div class="transport panel">
+          <button id="jumpStart" class="icon-btn" title="В начало">|◀</button>
+          <button id="previewToggle" class="play-btn">▶</button>
+          <button id="jumpEnd" class="icon-btn" title="В конец">▶|</button>
+          <span id="currentTimeLabel" class="timecode">00:00.00</span>
+          <input id="previewRange" type="range" min="0" max="30" step="0.01" value="0" aria-label="Позиция воспроизведения">
+          <span id="durationLabel" class="timecode">00:30.00</span>
+          <label class="volume"><span>Звук</span><input id="previewVolume" type="range" min="0" max="1" step="0.01" value=".85"></label>
+        </div>
+      </section>
+
+      <aside class="inspector-panel panel">
+        <div class="panel-title inspector-title"><strong id="inspectorHeading">Свойства проекта</strong><small id="selectionHint">Выберите клип на таймлайне</small></div>
+
+        <div id="projectInspector" class="inspector-view active">
+          <label class="control-row"><span>Длительность</span><span class="value" id="projectDuration">30 сек</span></label>
+          <label class="control-row"><span>Кадров/сек</span><select id="fps"><option>24</option><option selected>30</option><option>60</option></select></label>
+          <label class="control-row"><span>Качество</span><select id="quality"><option value="fast">Черновик</option><option value="balanced" selected>Оптимальное</option><option value="best">Лучшее</option></select></label>
+          <label class="control-row"><span>Цвет пустого фона</span><input id="backgroundColor" type="color" value="#161316"></label>
+        </div>
+
+        <div id="audioInspector" class="inspector-view">
+          <div class="audio-card">
+            <strong id="audioInspectorName">Аудио не выбрано</strong>
+            <small id="audioInspectorMeta">Добавьте MP3, WAV или M4A</small>
+          </div>
+          <label class="control-row"><span>Громкость</span><input id="audioGain" type="range" min="0" max="2" step="0.01" value="0.85"><output id="audioGainOut">85%</output></label>
+          <label class="control-row"><span>Начало</span><input id="audioStart" type="number" min="0" step="0.01" value="0"><output id="audioStartOut">00:00</output></label>
+          <label class="control-row"><span>Конец</span><input id="audioEnd" type="number" min="0" step="0.01" value="30"><output id="audioEndOut">00:30</output></label>
+          <label class="control-row"><span>Fade in</span><input id="audioFadeIn" type="range" min="0" max="5" step="0.1" value="0"><output id="audioFadeInOut">0.0с</output></label>
+          <label class="control-row"><span>Fade out</span><input id="audioFadeOut" type="range" min="0" max="5" step="0.1" value="0"><output id="audioFadeOutOut">0.0с</output></label>
+          <div class="stack-actions">
+            <button id="setAudioStartAtCursor" class="btn secondary">Начало на курсор</button>
+            <button id="setAudioEndAtCursor" class="btn secondary">Конец на курсор</button>
+            <button id="resetAudioTrim" class="btn secondary">Сбросить обрезку</button>
+          </div>
+        </div>
+
+        <div id="textInspector" class="inspector-view">
+          <label class="field-block"><span>Текст</span><textarea id="clipText"></textarea></label>
+          <div class="style-presets">
+            <button data-text-style="clean">Clean</button>
+            <button data-text-style="bold">Bold</button>
+            <button data-text-style="poster">Poster</button>
+            <button data-text-style="soft">Soft</button>
+          </div>
+          <label class="control-row"><span>Шрифт, px</span><input id="fontSize" type="range" min="24" max="180" value="76"><output id="fontSizeOut">76</output></label>
+          <label class="control-row"><span>Цвет</span><input id="textColor" type="color" value="#ffffff"></label>
+          <label class="control-row"><span>Обводка</span><input id="strokeWidth" type="range" min="0" max="12" value="2"><output id="strokeOut">2</output></label>
+          <label class="control-row"><span>Цвет обводки</span><input id="strokeColor" type="color" value="#000000"></label>
+          <label class="control-row"><span>Выравнивание</span><select id="textAlign"><option value="left">Слева</option><option value="center" selected>По центру</option><option value="right">Справа</option></select></label>
+          <label class="field-block"><span>Анимация появления</span>
+            <select id="textAnimation">
+              <option value="fade">Плавное появление</option>
+              <option value="rise">Подъём</option>
+              <option value="slide_left">Слева</option>
+              <option value="zoom">Приближение</option>
+              <option value="pop">Удар</option>
+              <option value="blur">Из размытия</option>
+              <option value="typewriter">Печатная машинка</option>
+              <option value="word_fill">Подсветка слов</option>
+              <option value="flicker">Мерцание</option>
+              <option value="none">Без анимации</option>
+            </select>
+          </label>
+          <div class="two-controls">
+            <label><span>X</span><input id="textX" type="number" min="0" max="100" value="50"></label>
+            <label><span>Y</span><input id="textY" type="number" min="0" max="100" value="50"></label>
+          </div>
+          <button id="deleteTextClip" class="btn danger">Удалить фразу</button>
+        </div>
+
+        <div id="backgroundInspector" class="inspector-view">
+          <div id="backgroundPreviewCard" class="selected-media-card"></div>
+          <label class="control-row"><span>Переход</span><select id="bgTransition"><option value="fade">Растворение</option><option value="wipeleft">Сдвиг влево</option><option value="slideright">Сдвиг вправо</option><option value="circleopen">Круг</option><option value="pixelize">Пиксели</option><option value="none">Без перехода</option></select></label>
+          <label class="control-row"><span>Движение</span><select id="bgMotion"><option value="zoom_in">Приближение</option><option value="zoom_out">Отдаление</option><option value="pan_left">Панорама влево</option><option value="pan_right">Панорама вправо</option><option value="static">Статично</option></select></label>
+          <label class="control-row"><span>Размытие</span><input id="backgroundBlur" type="range" min="0" max="30" value="0"><output id="blurOut">0</output></label>
+          <label class="control-row"><span>Удаление фона</span><select id="bgRemoveMode"><option value="none">Выключено</option><option value="chroma">Chroma key</option><option value="luma_dark">Убрать тёмный</option><option value="luma_light">Убрать светлый</option></select></label>
+          <label class="control-row"><span>Цвет key</span><input id="bgKeyColor" type="color" value="#00ff00"></label>
+          <label class="control-row"><span>Сила key</span><input id="bgKeyStrength" type="range" min="0.01" max="0.6" step="0.01" value="0.18"><output id="keyStrengthOut">0.18</output></label>
+          <label class="control-row"><span>Звук видео</span><select id="bgIncludeAudio"><option value="true">Включен</option><option value="false">Выключен</option></select></label>
+          <label class="control-row"><span>Громкость видео</span><input id="bgAudioGain" type="range" min="0" max="1" step="0.01" value="1"><output id="bgAudioGainOut">100%</output></label>
+          <button id="deleteBackgroundClip" class="btn danger">Удалить фон</button>
+        </div>
+      </aside>
+    </main>
+
+    <section class="timeline-panel panel">
+      <div class="timeline-toolbar">
+        <div class="timeline-toolset">
+          <div class="tool-toggle" aria-label="Режим таймлайна">
+            <button id="selectTool" class="tool-btn active" data-tool="select">Курсор <kbd>V</kbd></button>
+            <button id="bladeTool" class="tool-btn" data-tool="blade">Ножницы <kbd>B</kbd></button>
+          </div>
+          <button id="splitClip" class="btn compact secondary">Разрезать <kbd>S</kbd></button>
+          <button id="splitAllAtCursor" class="btn compact secondary">Разрезать всё</button>
+          <button id="duplicateSelected" class="btn compact secondary">Дубль <kbd>Ctrl+D</kbd></button>
+          <button id="deleteSelected" class="btn compact secondary">Удалить</button>
+          <button id="autoArrange" class="btn compact secondary">Распределить текст</button>
+        </div>
+        <div class="timeline-help">ПКМ по клипу — быстрые действия</div>
+        <div class="zoom-control"><span>Масштаб</span><input id="timelineZoom" type="range" min="18" max="100" value="42"></div>
+      </div>
+      <div class="timeline-body">
+        <div class="track-labels">
+          <div class="ruler-label"></div>
+          <div><strong>Видео</strong><small>фоны / ролики</small></div>
+          <div><strong>Текст</strong><small>фразы / титры</small></div>
+          <div><strong>Аудио</strong><small>трек / waveform</small></div>
+        </div>
+        <div id="timelineViewport" class="timeline-viewport">
+          <div id="timelineContent" class="timeline-content">
+          <div id="timelineRuler" class="timeline-ruler"></div>
+            <div id="backgroundTrack" class="track background-track"></div>
+            <div id="textTrack" class="track text-track"></div>
+            <div id="audioTrack" class="track audio-track">
+              <canvas id="waveformCanvas"></canvas>
+              <div id="audioClip" class="timeline-clip audio-clip empty"><span id="audioTrackName">Добавьте аудио</span><i class="clip-handle left"></i><i class="clip-handle right"></i></div>
+            </div>
+            <div id="playhead" class="playhead"><span></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <audio id="previewAudio"></audio>
+
+  <dialog id="newProjectDialog" class="project-dialog">
+    <form method="dialog" class="dialog-head"><strong>Новый проект</strong><button class="icon-btn">×</button></form>
+    <div class="project-form">
+      <label class="field-block"><span>Название</span><input id="projectNameInput" type="text" value="Koilof Project"></label>
+      <div class="project-presets">
+        <button class="project-preset active" data-project-preset="vertical" data-w="1080" data-h="1920">9:16<small>TikTok / Reels</small></button>
+        <button class="project-preset" data-project-preset="wide" data-w="1920" data-h="1080">16:9<small>YouTube</small></button>
+        <button class="project-preset" data-project-preset="square" data-w="1080" data-h="1080">1:1<small>Square</small></button>
+        <button class="project-preset" data-project-preset="custom">Custom<small>Свои размеры</small></button>
+      </div>
+      <div class="two-controls">
+        <label><span>Ширина</span><input id="newProjectWidth" type="number" min="240" max="7680" value="1080"></label>
+        <label><span>Высота</span><input id="newProjectHeight" type="number" min="240" max="7680" value="1920"></label>
+      </div>
+      <div class="two-controls">
+        <label><span>Длительность, сек</span><input id="newProjectDuration" type="number" min="1" max="7200" value="30"></label>
+        <label><span>FPS</span><select id="newProjectFps"><option>24</option><option selected>30</option><option>60</option></select></label>
+      </div>
+      <div class="two-controls">
+        <label><span>Качество</span><select id="newProjectQuality"><option value="fast">Черновик</option><option value="balanced" selected>Оптимальное</option><option value="best">Лучшее</option></select></label>
+        <label><span>Цвет фона</span><input id="newProjectBg" type="color" value="#161316"></label>
+      </div>
+      <button id="createNewProject" class="btn primary export-main" type="button">Создать чистый проект</button>
+    </div>
+  </dialog>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog" class="dialog-head"><strong>Настройки проекта</strong><button class="icon-btn">×</button></form>
+    <div class="project-form">
+      <div class="two-controls">
+        <label><span>FPS</span><select id="settingsFps"><option>24</option><option selected>30</option><option>60</option></select></label>
+        <label><span>Качество</span><select id="settingsQuality"><option value="fast">Черновик</option><option value="balanced" selected>Оптимальное</option><option value="best">Лучшее</option></select></label>
+      </div>
+      <div class="two-controls">
+        <label><span>Фон холста</span><input id="settingsBg" type="color" value="#161316"></label>
+        <label><span>Длительность, сек</span><input id="settingsDuration" type="number" min="1" max="7200" value="30"></label>
+      </div>
+      <button id="applySettings" class="btn primary export-main" type="button">Применить настройки</button>
+    </div>
+  </dialog>
+
+  <dialog id="helpDialog" class="help-dialog">
+    <form method="dialog" class="dialog-head"><strong>Помощь и клавиши</strong><button class="icon-btn">×</button></form>
+    <div class="help-grid">
+      <div><kbd>Space</kbd><span>Play / Pause</span></div>
+      <div><kbd>V</kbd><span>Курсор</span></div>
+      <div><kbd>B</kbd><span>Ножницы</span></div>
+      <div><kbd>S</kbd><span>Разрезать выбранный клип</span></div>
+      <div><kbd>Ctrl+D</kbd><span>Дублировать</span></div>
+      <div><kbd>Ctrl+C</kbd><span>Копировать клип</span></div>
+      <div><kbd>Ctrl+V</kbd><span>Вставить на курсор</span></div>
+      <div><kbd>Delete</kbd><span>Удалить выбранный клип</span></div>
+      <div><kbd>ПКМ</kbd><span>Контекстное меню клипа</span></div>
+      <div><kbd>Drag</kbd><span>Тяни оранжевую палочку таймлайна для плавной перемотки</span></div>
+    </div>
+  </dialog>
+
+  <div id="contextMenu" class="context-menu" role="menu" aria-hidden="true">
+    <button data-menu-action="split">Разрезать здесь <kbd>S</kbd></button>
+    <button data-menu-action="splitAll">Разрезать все клипы</button>
+    <button data-menu-action="duplicate">Дублировать <kbd>Ctrl+D</kbd></button>
+    <button data-menu-action="copy">Копировать <kbd>Ctrl+C</kbd></button>
+    <button data-menu-action="paste">Вставить на курсор <kbd>Ctrl+V</kbd></button>
+    <button data-menu-action="snapStart">Поставить начало на курсор</button>
+    <button data-menu-action="fillGap">Растянуть до следующего</button>
+    <hr>
+    <button data-menu-action="delete" class="danger">Удалить</button>
+  </div>
+
+  <dialog id="exportDialog" class="export-dialog">
+    <form method="dialog" class="dialog-head"><strong>Экспорт видео</strong><button class="icon-btn">×</button></form>
+    <div class="export-summary">
+      <div><small>Формат</small><strong id="exportResolution">1080 × 1920</strong></div>
+      <div><small>Длительность</small><strong id="exportDuration">00:30</strong></div>
+      <div><small>Фразы</small><strong id="exportLines">0</strong></div>
+    </div>
+    <button id="generateVideo" class="btn primary export-main">Создать MP4</button>
+    <button id="stopJob" class="btn secondary">Остановить</button>
+    <div id="statusLine" class="status-line idle"><span></span>Готов к экспорту</div>
+    <pre id="logBox" class="logbox">Здесь появится ход создания видео.</pre>
+    <div id="outputsBox" class="outputs-box"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/web/app.js"></script>
+</body>
+</html>
